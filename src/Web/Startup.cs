@@ -14,7 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Web.Interfaces;
+using Web.Services;
 
 namespace Web
 {
@@ -39,6 +40,7 @@ namespace Web
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddScoped(typeof(IRepository<>),typeof(EfRepository<>));
+            services.AddScoped<IHomeViewModelService, HomeViewModelService>();
             services.AddControllersWithViews();
         }
 
