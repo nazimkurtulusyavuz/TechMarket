@@ -43,5 +43,6 @@ Update-Database -Context AppIdentityDbContext -s Web
 * https://www.postgresql.org/
 * https://www.npgsql.org/doc/types/basic.html
 * https://www.npgsql.org/efcore/
+* https://getbootstrap.com/docs/4.6/components/card/
 
 
