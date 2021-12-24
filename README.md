@@ -44,5 +44,6 @@ Update-Database -Context AppIdentityDbContext -s Web
 * https://www.npgsql.org/doc/types/basic.html
 * https://www.npgsql.org/efcore/
 * https://getbootstrap.com/docs/4.6/components/card/
+* https://stackoverflow.com/questions/5269713/css-ellipsis-on-second-line
 
 
