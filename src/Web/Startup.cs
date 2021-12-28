@@ -41,6 +41,7 @@ namespace Web
                 .AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddScoped(typeof(IRepository<>),typeof(EfRepository<>));
             services.AddScoped<IHomeViewModelService, HomeViewModelService>();
+            services.AddScoped<IBasketViewModelService, BasketViewModelService>();
             services.AddControllersWithViews();
         }
 
