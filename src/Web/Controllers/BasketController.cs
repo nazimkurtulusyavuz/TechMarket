@@ -16,7 +16,6 @@ namespace Web.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            // todo : BasketViewModel ( including Total Price ) 
             return View(await _basketViewModelService.GetBasketAsync());
         }
 
@@ -25,6 +24,14 @@ namespace Web.Controllers
         {
             var basket = await _basketViewModelService.AddBasketItemAsync(productId);
             return Json(basket.Items.Count);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmptyBasket()
+        {
+            await _basketViewModelService.EmptyBasketAsync();
+            TempData["Message"] = "Your basket has been emptied successfully";
+            return RedirectToAction("Index", "Basket");      
         }
     }
 }

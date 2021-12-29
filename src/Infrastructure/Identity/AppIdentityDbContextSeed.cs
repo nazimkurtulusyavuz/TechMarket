@@ -25,8 +25,6 @@ namespace Infrastructure.Identity
 
             var demoUser = new ApplicationUser() { Email = userEmail, UserName = userEmail, EmailConfirmed = true };
             await userManager.CreateAsync(demoUser, AuthorizationConstants.DEFAULT_PASSWORD);
-
-            
         }
     }
 }
