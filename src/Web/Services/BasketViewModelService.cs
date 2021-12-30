@@ -94,7 +94,7 @@ namespace Web.Services
         {
             var vm = new BasketViewModel()
             {
-                TotalPrice = basket.Items.Sum(x => x.Product.Price),
+                TotalPrice = basket.Items.Sum(x => x.Quantity * x.Product.Price),
                 Items = basket.Items.Select(x => new BasketItemViewModel() 
                 { 
                     Id = x.Id,
@@ -118,10 +118,18 @@ namespace Web.Services
         public async Task RemoveBasketItemAsync(int basketItemId)
         {
             string buyerId = UserId ?? AnonymousId;
-            if (buyerId == null) return; ;
+            if (buyerId == null) return; 
             await _basketService.RemoveBasketItemAsync(buyerId, basketItemId);
         }
 
-        
+        public async Task UpdateBasketItemsAsync(int[] basketItemIds, int[] quantities)
+        {
+            string buyerId = UserId ?? AnonymousId;
+            if (buyerId == null || basketItemIds.Length == 0) return;
+            if (basketItemIds.Length != quantities.Length)
+                throw new ArgumentException("The basket item ids and quantities do not match!");
+            await _basketService.SetQuantitiesAsync(buyerId, basketItemIds, quantities);
+            
+        }
     }
 }

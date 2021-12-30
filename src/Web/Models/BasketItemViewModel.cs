@@ -15,5 +15,7 @@ namespace Web.Models
         public decimal Price { get; set; }
         public string PictureUri { get; set; }
         public string PriceUsd => Price.ToString("c2", new CultureInfo("en-US"));
+        public decimal TotalPrice => Price * Quantity;
+        public string TotalPriceUsd => TotalPrice.ToString("c2", new CultureInfo("en-US"));
     }
 }

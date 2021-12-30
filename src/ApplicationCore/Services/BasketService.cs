@@ -1,10 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ApplicationCore.Services
@@ -13,15 +10,17 @@ namespace ApplicationCore.Services
     {
         private readonly IRepository<Basket> _basketRepository;
 
-        public BasketService( IRepository<Basket> basketRepository)
+        public BasketService(IRepository<Basket> basketRepository)
         {
             _basketRepository = basketRepository;
         }
+
         public async Task EmptyBasketAsync(string buyerId)
         {
             var spec = new BasketWithItemsSpecification(buyerId);
             var basket = await _basketRepository.FirstOrDefaultAsync(spec);
             if (basket == null || basket.Items.Count == 0) return;
+
             basket.Items.Clear();
             await _basketRepository.UpdateAsync(basket);
         }
@@ -31,10 +30,57 @@ namespace ApplicationCore.Services
             var spec = new BasketWithItemsSpecification(buyerId);
             var basket = await _basketRepository.FirstOrDefaultAsync(spec);
             if (basket == null || basket.Items.Count == 0) return;
+
             var basketItem = basket.Items.FirstOrDefault(x => x.Id == basketItemId);
             if (basketItem == null) return;
             basket.Items.Remove(basketItem);
             await _basketRepository.UpdateAsync(basket);
+        }
+
+        public async Task SetQuantitiesAsync(string buyerId, int[] basketItemIds, int[] quantities)
+        {
+            var spec = new BasketWithItemsSpecification(buyerId);
+            var basket = await _basketRepository.FirstOrDefaultAsync(spec);
+            if (basket == null || basket.Items.Count == 0) return;
+
+            for (int i = 0; i < basketItemIds.Length; i++)
+            {
+                basket.Items.FirstOrDefault(x => x.Id == basketItemIds[i]).Quantity = quantities[i];
+            }
+
+            await _basketRepository.UpdateAsync(basket);
+        }
+
+        public async Task TransferBasketAsync(string anonymousId, string userId)
+        {
+            // bana anonim sepeti ve kullanıcı sepetini de getir
+            var specAnonymous = new BasketWithItemsSpecification(anonymousId);
+            var basketAnonymous = await _basketRepository.FirstOrDefaultAsync(specAnonymous);
+            var specUser = new BasketWithItemsSpecification(userId);
+            var basketUser = await _basketRepository.FirstOrDefaultAsync(specUser);
+            if (basketAnonymous == null) return;
+            //kullanıcı sepetı henuz olusmamıssa olustur
+            if (basketUser == null)
+            {
+                basketUser = new Basket() { BuyerId = userId };
+                await _basketRepository.AddAsync(basketUser);
+            }
+            // anonim sepetteki herşeyi kullanıcı sepete taşı AMA eğer yanı ürünler varsa sadece miktarlarını güncelle
+            foreach (var item in basketAnonymous.Items)
+            {
+                var existingItem = basketUser.Items.FirstOrDefault(x => x.ProductId == item.ProductId);
+                if (existingItem != null) 
+                {
+                    existingItem.Quantity += item.Quantity;
+                }
+                else
+                {
+                    basketUser.Items.Add(new BasketItem() { ProductId = item.ProductId, Quantity = item.Quantity });
+                }
+            }
+            await _basketRepository.UpdateAsync(basketUser);
+            // anonim sepeti sil
+            await _basketRepository.DeleteAsync(basketAnonymous);
         }
     }
 }
