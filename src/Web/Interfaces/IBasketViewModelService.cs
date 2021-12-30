@@ -13,5 +13,7 @@ namespace Web.Interfaces
         Task<BasketViewModel> AddBasketItemAsync(int productId, int quantity = 1);
         Task<int> BasketItemsCountAsync();
         Task EmptyBasketAsync();
+        Task RemoveBasketItemAsync(int basketItemId);
+
     }
 }

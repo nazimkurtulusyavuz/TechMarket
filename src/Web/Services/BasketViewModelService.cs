@@ -114,5 +114,14 @@ namespace Web.Services
             if (buyerId == null) return;
             await _basketService.EmptyBasketAsync(buyerId);
         }
+
+        public async Task RemoveBasketItemAsync(int basketItemId)
+        {
+            string buyerId = UserId ?? AnonymousId;
+            if (buyerId == null) return; ;
+            await _basketService.RemoveBasketItemAsync(buyerId, basketItemId);
+        }
+
+        
     }
 }
